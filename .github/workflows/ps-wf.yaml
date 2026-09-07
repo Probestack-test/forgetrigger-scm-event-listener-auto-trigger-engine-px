@@ -4,12 +4,7 @@ on:
   push:
     branches:
       - feature-adarsha
-
-  pull_request:
-    branches:
       - release
-    types:
-      - closed
 
 jobs:
   deploy:
