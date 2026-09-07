@@ -1,0 +1,344 @@
+{
+  "info" : {
+    "name" : "forgetrigger-scm-event-listener-auto-trigger-engine Postman Collection",
+    "description" : "The automated ignition system for the ForgeSphere platform. \nListens for incoming webhooks from Git SCMs (GitHub, GitLab, Bitbucket), \nvalidates their cryptographic signatures, and translates commit events \ninto Enhancement Pipeline executions. \nAlso manages \"subscriptions\" to define which branches/repositories \nget automatically enhanced on specific events (push, pull_request, tag).\n\n\nOpenAPI version: 1.0.0",
+    "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth" : {
+    "type" : "bearer",
+    "bearer" : [ {
+      "key" : "token",
+      "value" : "{{accessToken}}",
+      "type" : "string"
+    } ]
+  },
+  "variable" : [ {
+    "key" : "baseUrl",
+    "value" : "https://trigger.forgesphere.lightning.com/v1",
+    "type" : "string",
+    "description" : "Override with the base URL of the deployed Apigee proxy."
+  }, {
+    "key" : "accessToken",
+    "value" : "",
+    "type" : "string"
+  }, {
+    "key" : "X-GitHub-Event",
+    "value" : "",
+    "type" : "string",
+    "description" : "GitHub event type indicating what action triggered the webhook."
+  }, {
+    "key" : "X-Hub-Signature-256",
+    "value" : "",
+    "type" : "string",
+    "description" : "HMAC SHA256 signature of the payload (used for secret verification)."
+  }, {
+    "key" : "X-Gitlab-Event",
+    "value" : "",
+    "type" : "string",
+    "description" : "GitLab event type."
+  }, {
+    "key" : "X-Gitlab-Token",
+    "value" : "",
+    "type" : "string",
+    "description" : "Shared secret token for webhook verification."
+  }, {
+    "key" : "repositoryUrl",
+    "value" : "",
+    "type" : "string",
+    "description" : "Filter by repository URL."
+  }, {
+    "key" : "subscriptionId",
+    "value" : "",
+    "type" : "string"
+  }, {
+    "key" : "source",
+    "value" : "",
+    "type" : "string",
+    "description" : "Filter by the source of the event."
+  }, {
+    "key" : "status",
+    "value" : "",
+    "type" : "string",
+    "description" : "Filter by processing status."
+  }, {
+    "key" : "page",
+    "value" : "",
+    "type" : "string"
+  }, {
+    "key" : "size",
+    "value" : "",
+    "type" : "string"
+  }, {
+    "key" : "eventId",
+    "value" : "",
+    "type" : "string",
+    "description" : "The unique ID of the stored event record."
+  } ],
+  "item" : [ {
+    "name" : "Ingest GitHub webhook payloads",
+    "request" : {
+      "method" : "POST",
+      "description" : "Ingest GitHub webhook payloads\n\nResponses:\n- 202: Webhook accepted. Enhancement pipeline will be triggered if subscribed.\n- 401: Invalid signature or missing authentication header.\n- 400: Invalid payload, missing required fields, or unsupported event type.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ {
+        "key" : "X-GitHub-Event",
+        "value" : "{{X-GitHub-Event}}",
+        "type" : "text",
+        "disabled" : false,
+        "description" : "GitHub event type indicating what action triggered the webhook."
+      }, {
+        "key" : "X-Hub-Signature-256",
+        "value" : "{{X-Hub-Signature-256}}",
+        "type" : "text",
+        "disabled" : false,
+        "description" : "HMAC SHA256 signature of the payload (used for secret verification)."
+      }, {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "type" : "text"
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      },
+      "url" : {
+        "raw" : "{{baseUrl}}/webhooks/github",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "webhooks", "github" ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Ingest GitLab webhook payloads",
+    "request" : {
+      "method" : "POST",
+      "description" : "Ingest GitLab webhook payloads\n\nResponses:\n- 202: Webhook accepted.\n- 401: Invalid secret token.\n- 400: Invalid payload, missing required fields, or unsupported event type.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ {
+        "key" : "X-Gitlab-Event",
+        "value" : "{{X-Gitlab-Event}}",
+        "type" : "text",
+        "disabled" : false,
+        "description" : "GitLab event type."
+      }, {
+        "key" : "X-Gitlab-Token",
+        "value" : "{{X-Gitlab-Token}}",
+        "type" : "text",
+        "disabled" : false,
+        "description" : "Shared secret token for webhook verification."
+      }, {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "type" : "text"
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      },
+      "url" : {
+        "raw" : "{{baseUrl}}/webhooks/gitlab",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "webhooks", "gitlab" ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Manual or CLI-based trigger",
+    "request" : {
+      "method" : "POST",
+      "description" : "Manual or CLI-based trigger\n\nResponses:\n- 202: Generic trigger accepted and scheduled.\n- 400: Invalid payload, missing required fields, or unsupported event type.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "type" : "text"
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      },
+      "url" : {
+        "raw" : "{{baseUrl}}/webhooks/generic",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "webhooks", "generic" ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "List all auto-trigger subscriptions",
+    "request" : {
+      "method" : "GET",
+      "description" : "List all auto-trigger subscriptions\n\nResponses:\n- 200: List of subscriptions.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ ],
+      "url" : {
+        "raw" : "{{baseUrl}}/subscriptions?repositoryUrl={{repositoryUrl}}",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "subscriptions" ],
+        "query" : [ {
+          "key" : "repositoryUrl",
+          "value" : "{{repositoryUrl}}",
+          "disabled" : true,
+          "description" : "Filter by repository URL."
+        } ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Create a new auto-trigger subscription",
+    "request" : {
+      "method" : "POST",
+      "description" : "Create a new auto-trigger subscription\n\nResponses:\n- 201: Subscription created successfully.\n- 400: Invalid payload, missing required fields, or unsupported event type.\n- 409: A subscription for this repository/event already exists.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "type" : "text"
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      },
+      "url" : {
+        "raw" : "{{baseUrl}}/subscriptions",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "subscriptions" ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Get subscription by ID",
+    "request" : {
+      "method" : "GET",
+      "description" : "Get subscription by ID\n\nResponses:\n- 200: Subscription details.\n- 404: The requested subscription or event record does not exist.",
+      "header" : [ ],
+      "url" : {
+        "raw" : "{{baseUrl}}/subscriptions/:subscriptionId",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "subscriptions", ":subscriptionId" ],
+        "variable" : [ {
+          "key" : "subscriptionId",
+          "value" : "{{subscriptionId}}"
+        } ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Update an existing subscription",
+    "request" : {
+      "method" : "PUT",
+      "description" : "Update an existing subscription\n\nResponses:\n- 200: Subscription updated successfully.\n- 400: Invalid payload, missing required fields, or unsupported event type.\n- 404: The requested subscription or event record does not exist.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "type" : "text"
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{}",
+        "options" : {
+          "raw" : {
+            "language" : "json"
+          }
+        }
+      },
+      "url" : {
+        "raw" : "{{baseUrl}}/subscriptions/:subscriptionId",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "subscriptions", ":subscriptionId" ],
+        "variable" : [ {
+          "key" : "subscriptionId",
+          "value" : "{{subscriptionId}}"
+        } ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Delete a subscription",
+    "request" : {
+      "method" : "DELETE",
+      "description" : "Delete a subscription\n\nResponses:\n- 204: Subscription deleted successfully.\n- 404: The requested subscription or event record does not exist.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ ],
+      "url" : {
+        "raw" : "{{baseUrl}}/subscriptions/:subscriptionId",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "subscriptions", ":subscriptionId" ],
+        "variable" : [ {
+          "key" : "subscriptionId",
+          "value" : "{{subscriptionId}}"
+        } ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "List all received webhook events",
+    "request" : {
+      "method" : "GET",
+      "description" : "List all received webhook events\n\nResponses:\n- 200: List of event records.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ ],
+      "url" : {
+        "raw" : "{{baseUrl}}/events?source={{source}}&status={{status}}&repositoryUrl={{repositoryUrl}}&page={{page}}&size={{size}}",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "events" ],
+        "query" : [ {
+          "key" : "source",
+          "value" : "{{source}}",
+          "disabled" : true,
+          "description" : "Filter by the source of the event."
+        }, {
+          "key" : "status",
+          "value" : "{{status}}",
+          "disabled" : true,
+          "description" : "Filter by processing status."
+        }, {
+          "key" : "repositoryUrl",
+          "value" : "{{repositoryUrl}}",
+          "disabled" : true,
+          "description" : "Filter by repository."
+        }, {
+          "key" : "page",
+          "value" : "{{page}}",
+          "disabled" : true
+        }, {
+          "key" : "size",
+          "value" : "{{size}}",
+          "disabled" : true
+        } ]
+      }
+    },
+    "response" : [ ]
+  }, {
+    "name" : "Replay a failed webhook event",
+    "request" : {
+      "method" : "POST",
+      "description" : "Replay a failed webhook event\n\nResponses:\n- 202: Event re-queued for processing.\n- 404: The requested subscription or event record does not exist.\n- 500: Unexpected error while processing webhook or interacting with downstream services.",
+      "header" : [ ],
+      "url" : {
+        "raw" : "{{baseUrl}}/events/:eventId/replay",
+        "host" : [ "{{baseUrl}}" ],
+        "path" : [ "events", ":eventId", "replay" ],
+        "variable" : [ {
+          "key" : "eventId",
+          "value" : "{{eventId}}",
+          "description" : "The unique ID of the stored event record."
+        } ]
+      }
+    },
+    "response" : [ ]
+  } ]
+}
