@@ -5,7 +5,7 @@
 
   Proxy  : forgetrigger-scm-event-listener-auto-trigger-engine
   Version: 1.0.0
-  BasePath: /v1
+  BasePath: /v12
   Generated: auto-generated — do not edit manually
 
   Policies included:
@@ -28,7 +28,7 @@ Also manages "subscriptions" to define which branches/repositories
 get automatically enhanced on specific events (push, pull_request, tag).
 </Description>
   <DisplayName>forgetrigger-scm-event-listener-auto-trigger-engine</DisplayName>
-  <Basepaths>/v1</Basepaths>
+  <Basepaths>/v12</Basepaths>
   <ConfigurationVersion majorVersion="4" minorVersion="0"/>
   <CreatedAt>0</CreatedAt>
   <CreatedBy>apigee-generator</CreatedBy>
