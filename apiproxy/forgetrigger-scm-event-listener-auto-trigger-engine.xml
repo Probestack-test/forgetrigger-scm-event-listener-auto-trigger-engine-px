@@ -28,7 +28,7 @@ Also manages "subscriptions" to define which branches/repositories
 get automatically enhanced on specific events (push, pull_request, tag).
 </Description>
   <DisplayName>forgetrigger-scm-event-listener-auto-trigger-engine</DisplayName>
-  <Basepaths>/v25</Basepaths>
+  <Basepaths>/v1</Basepaths>
   <ConfigurationVersion majorVersion="4" minorVersion="0"/>
   <CreatedAt>0</CreatedAt>
   <CreatedBy>apigee-generator</CreatedBy>
